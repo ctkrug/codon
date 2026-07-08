@@ -46,7 +46,10 @@ const liveStatusEl = document.getElementById("live-status");
 const state = { normalized: "", raw: "", orfs: [], selectedOrfIndex: 0, siteRanges: [] };
 
 function describeInvalidCharacters(chars) {
-  const list = chars.map((c) => (c === " " ? "space" : `"${c}"`)).join(", ");
+  // chars always comes from findInvalidCharacters(normalized), and
+  // normalizeSequence already strips whitespace, so a space can never
+  // appear here.
+  const list = chars.map((c) => `"${c}"`).join(", ");
   return `Sequence contains characters that aren't A, C, G, or T: ${list}.`;
 }
 
