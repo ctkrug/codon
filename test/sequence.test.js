@@ -23,6 +23,12 @@ test("normalizeSequence strips whitespace and uppercases", () => {
   assert.equal(normalizeSequence(" acgt\nACGT "), "ACGTACGT");
 });
 
+test("normalizeSequence strips non-breaking spaces from a copy-pasted FASTA", () => {
+  // Pasting from a PDF or Word doc commonly substitutes U+00A0 for regular
+  // spaces; JS's \s matches it, but that's non-obvious enough to pin down.
+  assert.equal(normalizeSequence("ACGT ACGT"), "ACGTACGT");
+});
+
 test("isValidSequence accepts only ACGT", () => {
   assert.equal(isValidSequence("ACGT"), true);
   assert.equal(isValidSequence("ACGU"), false);
