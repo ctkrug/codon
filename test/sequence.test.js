@@ -6,6 +6,7 @@ import {
   findInvalidCharacters,
   gcContent,
   reverseComplement,
+  baseCounts,
 } from "../site/js/sequence.js";
 
 test("normalizeSequence strips whitespace and uppercases", () => {
@@ -30,4 +31,9 @@ test("gcContent computes percentage of G/C bases", () => {
 
 test("reverseComplement flips and complements the strand", () => {
   assert.equal(reverseComplement("ATGC"), "GCAT");
+});
+
+test("baseCounts tallies each base and reports zero for bases absent", () => {
+  assert.deepEqual(baseCounts("AATTGGGGC"), { A: 2, C: 1, G: 4, T: 2 });
+  assert.deepEqual(baseCounts(""), { A: 0, C: 0, G: 0, T: 0 });
 });
