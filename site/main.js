@@ -27,6 +27,12 @@ const gcSegments = {
   g: document.getElementById("gc-seg-g"),
   t: document.getElementById("gc-seg-t"),
 };
+const orfTitleEl = document.getElementById("orf-highlight-title");
+const orfListEl = document.getElementById("orf-list");
+
+// Tracks the current render's derived data so the ORF list's click handler
+// can re-highlight a selection without recomputing everything from scratch.
+const state = { normalized: "", raw: "", orfs: [], selectedOrfIndex: 0 };
 
 function describeInvalidCharacters(chars) {
   const list = chars.map((c) => (c === " " ? "space" : `"${c}"`)).join(", ");
@@ -57,26 +63,78 @@ function renderValidationState(raw) {
   return { normalized, valid: isValidSequence(normalized) };
 }
 
-// Renders the longest ORF (across all six frames) into its own panel and
+// Renders the selected ORF (the longest by default) into its own panel and
 // returns the raw-text range so the overlay can highlight the same span.
-function renderLongestOrf(normalized, raw) {
-  const orfs = findOrfs(normalized);
-  if (orfs.length === 0) {
+function renderOrfHighlight() {
+  const orf = state.orfs[state.selectedOrfIndex];
+  if (!orf) {
     orfPanel.hidden = true;
     return null;
   }
 
-  const longest = orfs[0];
-  const normalizedRange = mapOrfToSequenceRange(longest, normalized.length);
-  const rawRange = mapNormalizedRangeToRaw(raw, normalizedRange.start, normalizedRange.end);
+  const normalizedRange = mapOrfToSequenceRange(orf, state.normalized.length);
+  const rawRange = mapNormalizedRangeToRaw(state.raw, normalizedRange.start, normalizedRange.end);
 
   orfPanel.hidden = false;
+  orfTitleEl.textContent = state.selectedOrfIndex === 0 ? "Longest ORF" : "Selected ORF";
   orfMetaEl.textContent =
-    `Frame ${longest.frame} · ${longest.length} bases · ` +
-    `position ${longest.start}–${longest.end}`;
-  orfProteinEl.textContent = longest.protein;
+    `Frame ${orf.frame} · ${orf.length} bases · ` +
+    `position ${orf.start}–${orf.end}`;
+  orfProteinEl.textContent = orf.protein;
 
   return rawRange;
+}
+
+function scrollToRawRange(rawRange) {
+  if (!rawRange) return;
+  textarea.focus();
+  textarea.setSelectionRange(rawRange.start, rawRange.end);
+}
+
+// Re-renders the highlight panel and the overlay for the current selection
+// without recomputing frames/GC/lists — used by the ORF list's click handler.
+function applyOrfSelection(index, { scroll = false } = {}) {
+  state.selectedOrfIndex = index;
+  renderOrfListSelection();
+  const rawRange = renderOrfHighlight();
+  overlayEl.innerHTML = renderOverlayHtml(state.raw, { orfRange: rawRange });
+  if (scroll) scrollToRawRange(rawRange);
+}
+
+function renderOrfListSelection() {
+  for (const item of orfListEl.children) {
+    const isSelected = Number(item.dataset.index) === state.selectedOrfIndex;
+    item.classList.toggle("is-selected", isSelected);
+    item.setAttribute("aria-selected", String(isSelected));
+  }
+}
+
+function renderOrfList(orfs) {
+  orfListEl.innerHTML = "";
+  if (orfs.length === 0) {
+    const empty = document.createElement("li");
+    empty.className = "fact-list-empty";
+    empty.textContent = "No ORFs found.";
+    orfListEl.append(empty);
+    return;
+  }
+
+  orfs.forEach((orf, index) => {
+    const item = document.createElement("li");
+    item.dataset.index = String(index);
+    item.setAttribute("role", "option");
+    item.tabIndex = 0;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "orf-list-item";
+    button.textContent = `${orf.frame} · ${orf.length}bp · ${orf.start}–${orf.end}`;
+    button.addEventListener("click", () => applyOrfSelection(index, { scroll: true }));
+
+    item.append(button);
+    orfListEl.append(item);
+  });
+  renderOrfListSelection();
 }
 
 function renderFrames(normalized) {
@@ -129,18 +187,25 @@ function clearGcMeter() {
 function handleInput() {
   const raw = textarea.value;
   const { normalized, valid } = renderValidationState(raw);
+  state.raw = raw;
+  state.normalized = normalized;
+  state.selectedOrfIndex = 0;
 
   if (!valid) {
+    state.orfs = [];
     orfPanel.hidden = true;
     clearFrames();
     clearGcMeter();
+    renderOrfList([]);
     overlayEl.innerHTML = renderOverlayHtml(raw);
     return;
   }
 
   renderFrames(normalized);
   renderGcMeter(normalized);
-  const orfRange = renderLongestOrf(normalized, raw);
+  state.orfs = findOrfs(normalized);
+  renderOrfList(state.orfs);
+  const orfRange = renderOrfHighlight();
   overlayEl.innerHTML = renderOverlayHtml(raw, { orfRange });
 }
 
