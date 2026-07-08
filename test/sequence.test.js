@@ -16,6 +16,9 @@ import {
   MAX_RAW_LENGTH,
 } from "../site/js/sequence.js";
 
+const acgtString = (opts) =>
+  fc.array(fc.constantFrom("A", "C", "G", "T"), opts).map((bases) => bases.join(""));
+
 test("normalizeSequence strips whitespace and uppercases", () => {
   assert.equal(normalizeSequence(" acgt\nACGT "), "ACGTACGT");
 });
@@ -36,12 +39,20 @@ test("gcContent computes percentage of G/C bases", () => {
   assert.equal(gcContent("ACGT"), 50);
 });
 
+test("gcContent stays within [0, 100] and matches a manual G/C count", () => {
+  fc.assert(
+    fc.property(acgtString({ minLength: 1, maxLength: 200 }), (sequence) => {
+      const pct = gcContent(sequence);
+      assert.ok(pct >= 0 && pct <= 100);
+      const manualGc = [...sequence].filter((b) => b === "G" || b === "C").length;
+      assert.ok(Math.abs(pct - (manualGc / sequence.length) * 100) < 1e-9);
+    }),
+  );
+});
+
 test("reverseComplement flips and complements the strand", () => {
   assert.equal(reverseComplement("ATGC"), "GCAT");
 });
-
-const acgtString = (opts) =>
-  fc.array(fc.constantFrom("A", "C", "G", "T"), opts).map((bases) => bases.join(""));
 
 test("reverseComplement is its own inverse for any ACGT sequence", () => {
   fc.assert(
