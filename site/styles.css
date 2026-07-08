@@ -12,6 +12,16 @@
   --base-c: #2a9d8f;
   --base-g: #e0a72e;
   --base-t: #6a4c93;
+  /* Darker variants of the same four hues, used wherever a base color is
+     the text color of real running copy (the sequence overlay). The swatch
+     values above read fine as a GC-meter fill, a wordmark accent, or a
+     helix stroke, but several fall well under 4.5:1 against the paper
+     surfaces as *text* (--base-g text is ~1.7:1 — nearly invisible). These
+     keep each base's hue identity while meeting contrast for legibility. */
+  --base-a-ink: #b82f41;
+  --base-c-ink: #1e7167;
+  --base-g-ink: #815d13;
+  --base-t-ink: #6a4c93;
 
   --space-1: 8px;
   --space-2: 16px;
@@ -510,19 +520,19 @@ main {
 }
 
 .base-a {
-  color: var(--base-a);
+  color: var(--base-a-ink);
 }
 
 .base-c {
-  color: var(--base-c);
+  color: var(--base-c-ink);
 }
 
 .base-g {
-  color: var(--base-g);
+  color: var(--base-g-ink);
 }
 
 .base-t {
-  color: var(--base-t);
+  color: var(--base-t-ink);
 }
 
 .base-invalid {
