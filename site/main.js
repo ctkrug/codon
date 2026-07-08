@@ -5,6 +5,8 @@ import {
   mapNormalizedRangeToRaw,
   baseCounts,
   gcContent,
+  isSequenceTooLong,
+  MAX_SEQUENCE_LENGTH,
 } from "./js/sequence.js";
 import { findOrfs, mapOrfToSequenceRange } from "./js/orf.js";
 import { renderOverlayHtml } from "./js/overlay.js";
@@ -53,6 +55,15 @@ function renderValidationState(raw) {
     errorEl.textContent = "";
     lengthEl.textContent = "0 bases";
     textarea.classList.remove("is-invalid");
+    return { normalized, valid: false };
+  }
+
+  if (isSequenceTooLong(normalized)) {
+    errorEl.textContent =
+      `Sequence is too long for the live view (limit ${MAX_SEQUENCE_LENGTH.toLocaleString()} bases). ` +
+      "Try a shorter fragment.";
+    textarea.classList.add("is-invalid");
+    lengthEl.textContent = `${normalized.length.toLocaleString()} bases (too long)`;
     return { normalized, valid: false };
   }
 
@@ -269,8 +280,15 @@ function handleInput() {
     clearCodonUsage();
     clearRestrictionSites();
     renderOrfList([]);
-    overlayEl.innerHTML = renderOverlayHtml(raw);
-    liveStatusEl.textContent = normalized.length === 0 ? "" : "Sequence contains invalid characters.";
+    // The overlay renders one element per character, so skip it once a
+    // paste is past the length cap rather than building a huge DOM tree
+    // for text the app is about to reject anyway.
+    if (isSequenceTooLong(normalized)) {
+      overlayEl.textContent = raw;
+    } else {
+      overlayEl.innerHTML = renderOverlayHtml(raw);
+    }
+    liveStatusEl.textContent = normalized.length === 0 ? "" : errorEl.textContent;
     return;
   }
 

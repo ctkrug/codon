@@ -2,6 +2,18 @@ const VALID_BASES = new Set(["A", "C", "G", "T"]);
 
 const COMPLEMENT = { A: "T", T: "A", C: "G", G: "C" };
 
+// The live overlay renders one DOM element per character, so its cost scales
+// linearly with input length with no natural ceiling — comfortably fast for
+// any single gene, operon, or plasmid, but a genome-scale paste (megabases)
+// would freeze the tab. Codon is a scratchpad for fragments, not a genome
+// browser, so pastes over this size are rejected with a clear message
+// instead of degrading silently.
+export const MAX_SEQUENCE_LENGTH = 100_000;
+
+export function isSequenceTooLong(sequence) {
+  return sequence.length > MAX_SEQUENCE_LENGTH;
+}
+
 // Strips whitespace/newlines a user might paste from FASTA-style sources and
 // uppercases the result; does not touch non-ACGT characters so callers can
 // surface a validation error instead of silently discarding data.
