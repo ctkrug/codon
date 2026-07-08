@@ -8,6 +8,7 @@ import {
   gcContent,
   isSequenceTooLong,
   MAX_SEQUENCE_LENGTH,
+  isRawTooLong,
 } from "./js/sequence.js";
 import { findOrfs, mapOrfToSequenceRange } from "./js/orf.js";
 import { renderOverlayHtml } from "./js/overlay.js";
@@ -50,6 +51,19 @@ function describeInvalidCharacters(chars) {
 }
 
 function renderValidationState(raw) {
+  // Checked on the raw text before normalizing: a paste that's mostly
+  // whitespace padding around a handful of real bases would normalize down
+  // to something well under the sequence-length cap below, but the raw
+  // text is what the overlay actually renders character-by-character.
+  if (isRawTooLong(raw)) {
+    errorEl.textContent =
+      `Sequence is too long for the live view (limit ${MAX_SEQUENCE_LENGTH.toLocaleString()} bases). ` +
+      "Try a shorter fragment.";
+    textarea.classList.add("is-invalid");
+    lengthEl.textContent = "too long";
+    return { normalized: "", valid: false };
+  }
+
   const normalized = normalizeSequence(raw);
 
   if (normalized.length === 0) {
@@ -285,13 +299,16 @@ function handleInput() {
     renderOrfList([]);
     // The overlay renders one element per character, so skip it once a
     // paste is past the length cap rather than building a huge DOM tree
-    // for text the app is about to reject anyway.
-    if (isSequenceTooLong(normalized)) {
+    // for text the app is about to reject anyway. isRawTooLong catches a
+    // mostly-whitespace paste that normalizes down to something small.
+    if (isRawTooLong(raw) || isSequenceTooLong(normalized)) {
       overlayEl.textContent = raw;
     } else {
       overlayEl.innerHTML = renderOverlayHtml(raw);
     }
-    liveStatusEl.textContent = normalized.length === 0 ? "" : errorEl.textContent;
+    // raw.length, not normalized.length: a too-long, mostly-whitespace raw
+    // paste normalizes down to "" but still has a real error to announce.
+    liveStatusEl.textContent = raw.length === 0 ? "" : errorEl.textContent;
     return;
   }
 
