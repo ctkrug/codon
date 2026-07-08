@@ -8,6 +8,7 @@ import {
   reverseComplement,
   baseCounts,
   mapNormalizedRangeToRaw,
+  mapNormalizedRangesToRaw,
   isSequenceTooLong,
   MAX_SEQUENCE_LENGTH,
 } from "../site/js/sequence.js";
@@ -65,4 +66,32 @@ test("isSequenceTooLong accepts a sequence at or under the cap", () => {
 
 test("isSequenceTooLong rejects a sequence over the cap", () => {
   assert.equal(isSequenceTooLong("A".repeat(MAX_SEQUENCE_LENGTH + 1)), true);
+});
+
+test("mapNormalizedRangesToRaw matches mapNormalizedRangeToRaw for each range", () => {
+  const raw = "AC GT\nAC GT";
+  const ranges = [
+    { start: 0, end: 2 },
+    { start: 1, end: 3 },
+    { start: 4, end: 8 },
+    { start: 0, end: 0 },
+  ];
+  const batched = mapNormalizedRangesToRaw(raw, ranges);
+  const oneAtATime = ranges.map((r) => mapNormalizedRangeToRaw(raw, r.start, r.end));
+  assert.deepEqual(batched, oneAtATime);
+});
+
+test("mapNormalizedRangesToRaw stays fast with thousands of ranges over a long text", () => {
+  // Simulates a sequence with many restriction-site hits: mapping each hit
+  // by independently rescanning the whole raw text (mapNormalizedRangeToRaw
+  // in a loop) is O(hits * length) and can hang; the batched version builds
+  // the index map once.
+  const raw = "GAATTC".repeat(16667); // ~100,000 bases
+  const ranges = [];
+  for (let i = 0; i < raw.length; i += 6) ranges.push({ start: i, end: i + 6 });
+  const started = Date.now();
+  const mapped = mapNormalizedRangesToRaw(raw, ranges);
+  const elapsed = Date.now() - started;
+  assert.equal(mapped.length, ranges.length);
+  assert.ok(elapsed < 1000, `expected mapNormalizedRangesToRaw to finish in under 1s, took ${elapsed}ms`);
 });
