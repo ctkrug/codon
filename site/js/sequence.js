@@ -85,3 +85,20 @@ export function mapNormalizedRangeToRaw(raw, start, end) {
   if (rawStart === null) rawStart = raw.length;
   return { start: rawStart, end: rawEnd };
 }
+
+// Same mapping as mapNormalizedRangeToRaw, but for many ranges over the same
+// raw text at once (e.g. every restriction-site hit). Calling the
+// single-range version in a loop rescans the whole raw text per range —
+// O(ranges * length) — which is slow enough to hang the tab once a sequence
+// has thousands of hits. This builds the normalized-index -> raw-index
+// lookup once and reuses it for every range.
+export function mapNormalizedRangesToRaw(raw, ranges) {
+  const rawIndexAt = [];
+  for (let i = 0; i < raw.length; i += 1) {
+    if (/\s/.test(raw[i])) continue;
+    rawIndexAt.push(i);
+  }
+  const rawIndexOf = (normalizedIndex) =>
+    normalizedIndex < rawIndexAt.length ? rawIndexAt[normalizedIndex] : raw.length;
+  return ranges.map(({ start, end }) => ({ start: rawIndexOf(start), end: rawIndexOf(end) }));
+}
