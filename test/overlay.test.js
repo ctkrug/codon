@@ -32,6 +32,15 @@ test("renderOverlayHtml passes whitespace through unstyled", () => {
   );
 });
 
+test("renderOverlayHtml passes an embedded newline through unstyled", () => {
+  const html = renderOverlayHtml("AC\nGT");
+  assert.equal(
+    html,
+    '<span class="base-a">A</span><span class="base-c">C</span>\n' +
+      '<span class="base-g">G</span><span class="base-t">T</span>'
+  );
+});
+
 test("renderOverlayHtml escapes HTML-significant characters", () => {
   const html = renderOverlayHtml("<A&>");
   assert.ok(!html.includes("<A&>"));
