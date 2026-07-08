@@ -30,14 +30,25 @@ daylight — a notebook, not a lab instrument under a black light.
 | `--accent-support` | `#b3452c` | rust — secondary emphasis, active tab |
 | `--success` | `#4c7a52` | sage — valid sequence, passing state |
 | `--danger` | `#b3452c` | rust — invalid character, error state |
-| `--base-a` | `#d1495b` | coral — adenine, everywhere a base is shown |
-| `--base-c` | `#2a9d8f` | teal — cytosine |
-| `--base-g` | `#e0a72e` | amber — guanine |
-| `--base-t` | `#6a4c93` | violet — thymine |
+| `--base-a` | `#d1495b` | coral — adenine swatch: GC meter fill, wordmark dot, helix stroke |
+| `--base-c` | `#2a9d8f` | teal — cytosine swatch (same uses as above) |
+| `--base-g` | `#e0a72e` | amber — guanine swatch (same uses as above) |
+| `--base-t` | `#6a4c93` | violet — thymine swatch (same uses as above) |
+| `--base-a-ink` | `#b82f41` | coral, darkened — adenine as *text* in the sequence overlay |
+| `--base-c-ink` | `#1e7167` | teal, darkened — cytosine as text |
+| `--base-g-ink` | `#815d13` | amber, darkened — guanine as text |
+| `--base-t-ink` | `#6a4c93` | violet — thymine as text (already ≥4.5:1, unchanged) |
 
-Base colors are load-bearing: they appear in the sequence textarea overlay,
-the six-frame viewer, ORF highlights, and the GC meter's stacked bar, so a
-user's eye learns the mapping once and reuses it everywhere.
+Base colors are load-bearing: the same four hues appear in the sequence
+textarea overlay, the wordmark dots, and the GC meter's stacked bar, so a
+user's eye learns the mapping once and reuses it everywhere. The `-ink`
+variants exist because several of the swatch values (bright, meant to read
+as a colored highlighter fill) fall well under 4.5:1 against the paper
+surfaces when used as small running *text* — `--base-g` as text is ~1.7:1,
+nearly invisible. Decorative, non-text uses (GC meter fill, wordmark
+logotype dot, helix stroke) keep the vivid swatch value; the overlay's
+per-base `.base-a/.base-c/.base-g/.base-t` text classes use the darker `-ink`
+variant of the same hue instead.
 
 **Type**
 
