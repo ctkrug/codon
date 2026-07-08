@@ -23,7 +23,11 @@ const MAX_ORFS = 500;
 // than a from-scratch re-translation, which matters because many in-frame
 // starts commonly share the same downstream stop.
 function findOrfsInFrame(strand, offset, frameLabel) {
-  const codonCount = Math.floor((strand.length - offset) / 3);
+  // Clamped to 0: when the strand is shorter than the frame's offset (e.g.
+  // a 1-base sequence in frame +3, offset 2), strand.length - offset goes
+  // negative and `new Array(negative)` throws RangeError, crashing the
+  // live view on a perfectly valid, if minimal, sequence.
+  const codonCount = Math.max(0, Math.floor((strand.length - offset) / 3));
   const codons = new Array(codonCount);
   for (let k = 0; k < codonCount; k += 1) {
     const pos = offset + k * 3;
