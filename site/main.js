@@ -6,6 +6,7 @@ import {
 } from "./js/sequence.js";
 import { findOrfs, mapOrfToSequenceRange } from "./js/orf.js";
 import { renderOverlayHtml } from "./js/overlay.js";
+import { sixFrameTranslation } from "./js/translate.js";
 
 const textarea = document.getElementById("sequence-input");
 const errorEl = document.getElementById("sequence-error");
@@ -14,6 +15,8 @@ const overlayEl = document.getElementById("sequence-overlay");
 const orfPanel = document.getElementById("orf-highlight-panel");
 const orfMetaEl = document.getElementById("orf-highlight-meta");
 const orfProteinEl = document.getElementById("orf-highlight-protein");
+const emptyFramesEl = document.getElementById("empty-frames");
+const frameViewerEl = document.getElementById("frame-viewer");
 
 function describeInvalidCharacters(chars) {
   const list = chars.map((c) => (c === " " ? "space" : `"${c}"`)).join(", ");
@@ -66,16 +69,45 @@ function renderLongestOrf(normalized, raw) {
   return rawRange;
 }
 
+function renderFrames(normalized) {
+  frameViewerEl.innerHTML = "";
+  for (const { frame, protein } of sixFrameTranslation(normalized)) {
+    const row = document.createElement("div");
+    row.className = "frame-row";
+
+    const label = document.createElement("span");
+    label.className = "frame-label";
+    label.textContent = frame;
+
+    const proteinEl = document.createElement("span");
+    proteinEl.className = "frame-protein";
+    proteinEl.textContent = protein || "—";
+
+    row.append(label, proteinEl);
+    frameViewerEl.append(row);
+  }
+  emptyFramesEl.hidden = true;
+  frameViewerEl.hidden = false;
+}
+
+function clearFrames() {
+  frameViewerEl.hidden = true;
+  frameViewerEl.innerHTML = "";
+  emptyFramesEl.hidden = false;
+}
+
 function handleInput() {
   const raw = textarea.value;
   const { normalized, valid } = renderValidationState(raw);
 
   if (!valid) {
     orfPanel.hidden = true;
+    clearFrames();
     overlayEl.innerHTML = renderOverlayHtml(raw);
     return;
   }
 
+  renderFrames(normalized);
   const orfRange = renderLongestOrf(normalized, raw);
   overlayEl.innerHTML = renderOverlayHtml(raw, { orfRange });
 }
