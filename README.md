@@ -46,6 +46,7 @@ site — HTML, CSS, and JS only — so it runs anywhere a browser does. See
 ## Development
 
 ```sh
+npm install # install fast-check (property-based tests only — the site itself ships no dependencies)
 npm test    # run the unit test suite (node:test)
 ```
 
