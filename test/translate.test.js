@@ -11,6 +11,11 @@ test("translateCodon maps codons to amino acids", () => {
   assert.equal(translateCodon("TAA"), "*");
 });
 
+test("translateCodon reports an ambiguous or malformed codon as X", () => {
+  assert.equal(translateCodon("NNN"), "X");
+  assert.equal(translateCodon(""), "X");
+});
+
 test("translateFrame translates from the given offset, dropping trailing partial codon", () => {
   assert.equal(translateFrame("ATGGCC", 0), "MA");
   assert.equal(translateFrame("AATGGCC", 1), "MA");
