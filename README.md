@@ -14,15 +14,20 @@ everything about it, live, in one page.
 
 ## What it does
 
-- **GC content** — live percentage as you type or paste, with a visual meter.
+- **GC content** — live percentage as you type or paste, with a stacked
+  per-base meter.
 - **Six-frame translation** — all three forward and three reverse-complement
-  reading frames, translated to protein, updated as you scroll a sequence of
-  any length.
-- **ORF detection** — every open reading frame highlighted directly on the
-  sequence, start (ATG) to stop codon, sortable by length.
-- **Codon usage stats** — a breakdown of codon frequency across the sequence.
+  reading frames, translated to protein live on every edit.
+- **ORF detection** — every open reading frame found across all six frames,
+  listed longest-first; the longest is highlighted directly on the sequence
+  by default, and clicking any other one in the list highlights and scrolls
+  to it instead.
+- **Codon usage stats** — every codon present, with its count and share of
+  the sequence, sorted by frequency.
 - **Restriction site finder** — common restriction enzyme recognition sites
-  located and marked inline.
+  located, listed by name and position, and marked inline on the sequence.
+- **Load example** — two real coding sequences to try instantly, no pasting
+  required.
 
 ## The wow moment
 
@@ -44,9 +49,17 @@ site — HTML, CSS, and JS only — so it runs anywhere a browser does. See
 npm test    # run the unit test suite (node:test)
 ```
 
-Then open `site/index.html` in a browser — no build step required. The
-entire `site/` directory is the deployable app: relative asset paths only,
-so it works from any subpath.
+Then serve `site/` with any static file server and open it in a browser —
+no build step required:
+
+```sh
+cd site && python3 -m http.server 8080   # or `npx serve`, etc.
+```
+
+Opening `site/index.html` directly via a `file://` URL will not work: browsers
+block cross-origin `<script type="module">` loads under the `file://` scheme.
+The entire `site/` directory is the deployable app: relative asset paths only,
+so it works unmodified from any subpath a static server serves it from.
 
 ## License
 
