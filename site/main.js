@@ -2,11 +2,18 @@ import {
   normalizeSequence,
   isValidSequence,
   findInvalidCharacters,
+  mapNormalizedRangeToRaw,
 } from "./js/sequence.js";
+import { findOrfs, mapOrfToSequenceRange } from "./js/orf.js";
+import { renderOverlayHtml } from "./js/overlay.js";
 
 const textarea = document.getElementById("sequence-input");
 const errorEl = document.getElementById("sequence-error");
 const lengthEl = document.getElementById("sequence-length");
+const overlayEl = document.getElementById("sequence-overlay");
+const orfPanel = document.getElementById("orf-highlight-panel");
+const orfMetaEl = document.getElementById("orf-highlight-meta");
+const orfProteinEl = document.getElementById("orf-highlight-protein");
 
 function describeInvalidCharacters(chars) {
   const list = chars.map((c) => (c === " " ? "space" : `"${c}"`)).join(", ");
@@ -37,9 +44,45 @@ function renderValidationState(raw) {
   return { normalized, valid: isValidSequence(normalized) };
 }
 
+// Renders the longest ORF (across all six frames) into its own panel and
+// returns the raw-text range so the overlay can highlight the same span.
+function renderLongestOrf(normalized, raw) {
+  const orfs = findOrfs(normalized);
+  if (orfs.length === 0) {
+    orfPanel.hidden = true;
+    return null;
+  }
+
+  const longest = orfs[0];
+  const normalizedRange = mapOrfToSequenceRange(longest, normalized.length);
+  const rawRange = mapNormalizedRangeToRaw(raw, normalizedRange.start, normalizedRange.end);
+
+  orfPanel.hidden = false;
+  orfMetaEl.textContent =
+    `Frame ${longest.frame} · ${longest.length} bases · ` +
+    `position ${longest.start}–${longest.end}`;
+  orfProteinEl.textContent = longest.protein;
+
+  return rawRange;
+}
+
 function handleInput() {
-  renderValidationState(textarea.value);
+  const raw = textarea.value;
+  const { normalized, valid } = renderValidationState(raw);
+
+  if (!valid) {
+    orfPanel.hidden = true;
+    overlayEl.innerHTML = renderOverlayHtml(raw);
+    return;
+  }
+
+  const orfRange = renderLongestOrf(normalized, raw);
+  overlayEl.innerHTML = renderOverlayHtml(raw, { orfRange });
 }
 
 textarea.addEventListener("input", handleInput);
+textarea.addEventListener("scroll", () => {
+  overlayEl.scrollTop = textarea.scrollTop;
+  overlayEl.scrollLeft = textarea.scrollLeft;
+});
 handleInput();
