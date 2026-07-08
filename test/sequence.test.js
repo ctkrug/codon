@@ -39,6 +39,14 @@ test("findInvalidCharacters reports offending characters", () => {
   assert.deepEqual(findInvalidCharacters("ACGTXN"), ["X", "N"]);
 });
 
+test("findInvalidCharacters reports a pasted emoji as one character, not split surrogate halves", () => {
+  // A DNA emoji (or any astral character) is two UTF-16 code units; a naive
+  // index-based scan would report two "invalid" halves instead of the one
+  // glyph a user actually sees. for...of iterates by code point, so this
+  // should report the whole emoji as a single entry.
+  assert.deepEqual(findInvalidCharacters("ACGT\u{1F9EC}N"), ["\u{1F9EC}", "N"]);
+});
+
 test("gcContent computes percentage of G/C bases", () => {
   assert.equal(gcContent("GGCC"), 100);
   assert.equal(gcContent("AATT"), 0);
