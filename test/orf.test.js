@@ -15,6 +15,15 @@ test("findOrfs locates an ATG-to-stop run on the forward strand", () => {
   assert.equal(longest.protein, "MA*");
 });
 
+test("findOrfs reports an ambiguous in-frame codon as X in the protein", () => {
+  // The ORF scanner doesn't itself enforce ACGT-only input (that's the
+  // caller's job), so an ambiguity code like N must translate through the
+  // same X fallback as translateCodon rather than crashing or dropping it.
+  const orfs = findOrfs("ATGNNNTAA");
+  assert.equal(orfs.length, 1);
+  assert.equal(orfs[0].protein, "MX*");
+});
+
 test("findOrfs returns results sorted longest first", () => {
   const orfs = findOrfs("ATGAAATAAATGTAA");
   for (let i = 1; i < orfs.length; i += 1) {
