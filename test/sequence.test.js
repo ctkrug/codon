@@ -120,6 +120,23 @@ test("mapNormalizedRangesToRaw matches mapNormalizedRangeToRaw for each range", 
   assert.deepEqual(batched, oneAtATime);
 });
 
+test("mapNormalizedRangesToRaw matches mapNormalizedRangeToRaw for random raw text and ranges", () => {
+  fc.assert(
+    fc.property(
+      fc
+        .array(fc.constantFrom("A", "C", "G", "T", " ", "\n"), { maxLength: 60 })
+        .map((chars) => chars.join("")),
+      fc.array(fc.record({ a: fc.nat(30), b: fc.nat(30) }), { maxLength: 10 }),
+      (raw, pairs) => {
+        const ranges = pairs.map(({ a, b }) => ({ start: Math.min(a, b), end: Math.max(a, b) }));
+        const batched = mapNormalizedRangesToRaw(raw, ranges);
+        const oneAtATime = ranges.map((r) => mapNormalizedRangeToRaw(raw, r.start, r.end));
+        assert.deepEqual(batched, oneAtATime);
+      },
+    ),
+  );
+});
+
 test("mapNormalizedRangesToRaw stays fast with thousands of ranges over a long text", () => {
   // Simulates a sequence with many restriction-site hits: mapping each hit
   // by independently rescanning the whole raw text (mapNormalizedRangeToRaw
