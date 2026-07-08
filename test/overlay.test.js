@@ -41,6 +41,11 @@ test("renderOverlayHtml passes an embedded newline through unstyled", () => {
   );
 });
 
+test("renderOverlayHtml ignores a degenerate (empty or inverted) site range", () => {
+  const html = renderOverlayHtml("ACGT", { siteRanges: [{ start: 2, end: 2 }] });
+  assert.ok(!html.includes("site-mark"));
+});
+
 test("renderOverlayHtml escapes HTML-significant characters", () => {
   const html = renderOverlayHtml("<A&>");
   assert.ok(!html.includes("<A&>"));
