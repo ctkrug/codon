@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { findRestrictionSites } from "../src/restrictionSites.js";
+import { findRestrictionSites } from "../site/js/restrictionSites.js";
 
 test("findRestrictionSites locates a known recognition site", () => {
   const hits = findRestrictionSites("AAAGAATTCAAA");

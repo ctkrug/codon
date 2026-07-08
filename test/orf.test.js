@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { findOrfs } from "../src/orf.js";
+import { findOrfs } from "../site/js/orf.js";
 
 test("findOrfs locates an ATG-to-stop run on the forward strand", () => {
   const orfs = findOrfs("CCATGGCCTAACC");

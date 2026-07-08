@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { translateCodon, translateFrame, sixFrameTranslation } from "../src/translate.js";
+import { translateCodon, translateFrame, sixFrameTranslation } from "../site/js/translate.js";
 
 test("translateCodon maps codons to amino acids", () => {
   assert.equal(translateCodon("ATG"), "M");

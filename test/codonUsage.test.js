@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { codonUsage } from "../src/codonUsage.js";
+import { codonUsage } from "../site/js/codonUsage.js";
 
 test("codonUsage counts and ranks codons by frequency", () => {
   const usage = codonUsage("ATGATGGCC");

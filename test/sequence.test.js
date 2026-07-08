@@ -6,7 +6,7 @@ import {
   findInvalidCharacters,
   gcContent,
   reverseComplement,
-} from "../src/sequence.js";
+} from "../site/js/sequence.js";
 
 test("normalizeSequence strips whitespace and uppercases", () => {
   assert.equal(normalizeSequence(" acgt\nACGT "), "ACGTACGT");
