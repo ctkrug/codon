@@ -34,7 +34,8 @@ live as you scroll through the DNA — all client-side, all instant.
 
 Plain JavaScript (ES modules), no framework, no build step. Ships as a static
 site — HTML, CSS, and JS only — so it runs anywhere a browser does. See
-[`docs/VISION.md`](docs/VISION.md) for the design rationale and
+[`docs/VISION.md`](docs/VISION.md) for the design rationale,
+[`docs/DESIGN.md`](docs/DESIGN.md) for the art direction, and
 [`docs/BACKLOG.md`](docs/BACKLOG.md) for the build plan.
 
 ## Development
@@ -43,7 +44,9 @@ site — HTML, CSS, and JS only — so it runs anywhere a browser does. See
 npm test    # run the unit test suite (node:test)
 ```
 
-Then open `site/index.html` in a browser — no build step required.
+Then open `site/index.html` in a browser — no build step required. The
+entire `site/` directory is the deployable app: relative asset paths only,
+so it works from any subpath.
 
 ## License
 
