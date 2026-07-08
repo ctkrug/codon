@@ -8,6 +8,8 @@ import {
   reverseComplement,
   baseCounts,
   mapNormalizedRangeToRaw,
+  isSequenceTooLong,
+  MAX_SEQUENCE_LENGTH,
 } from "../site/js/sequence.js";
 
 test("normalizeSequence strips whitespace and uppercases", () => {
@@ -55,4 +57,12 @@ test("mapNormalizedRangeToRaw handles an empty range at the start", () => {
 
 test("mapNormalizedRangeToRaw handles a range reaching the end of the text", () => {
   assert.deepEqual(mapNormalizedRangeToRaw("ACGT", 2, 4), { start: 2, end: 4 });
+});
+
+test("isSequenceTooLong accepts a sequence at or under the cap", () => {
+  assert.equal(isSequenceTooLong("A".repeat(MAX_SEQUENCE_LENGTH)), false);
+});
+
+test("isSequenceTooLong rejects a sequence over the cap", () => {
+  assert.equal(isSequenceTooLong("A".repeat(MAX_SEQUENCE_LENGTH + 1)), true);
 });
