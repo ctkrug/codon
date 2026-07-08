@@ -9,6 +9,7 @@ import {
 import { findOrfs, mapOrfToSequenceRange } from "./js/orf.js";
 import { renderOverlayHtml } from "./js/overlay.js";
 import { sixFrameTranslation } from "./js/translate.js";
+import { codonUsage } from "./js/codonUsage.js";
 
 const textarea = document.getElementById("sequence-input");
 const errorEl = document.getElementById("sequence-error");
@@ -29,6 +30,7 @@ const gcSegments = {
 };
 const orfTitleEl = document.getElementById("orf-highlight-title");
 const orfListEl = document.getElementById("orf-list");
+const codonTableBodyEl = document.getElementById("codon-table-body");
 
 // Tracks the current render's derived data so the ORF list's click handler
 // can re-highlight a selection without recomputing everything from scratch.
@@ -184,6 +186,38 @@ function clearGcMeter() {
   gcMeterEl.setAttribute("aria-label", "GC content: no sequence yet");
 }
 
+function renderCodonUsage(normalized) {
+  codonTableBodyEl.innerHTML = "";
+  const usage = codonUsage(normalized);
+
+  if (usage.length === 0) {
+    const row = document.createElement("tr");
+    row.innerHTML = '<td colspan="3" class="fact-list-empty">No complete codons yet.</td>';
+    codonTableBodyEl.append(row);
+    return;
+  }
+
+  for (const { codon, count, fraction } of usage) {
+    const row = document.createElement("tr");
+
+    const codonCell = document.createElement("td");
+    codonCell.textContent = codon;
+
+    const countCell = document.createElement("td");
+    countCell.textContent = String(count);
+
+    const pctCell = document.createElement("td");
+    pctCell.textContent = `${(fraction * 100).toFixed(1)}%`;
+
+    row.append(codonCell, countCell, pctCell);
+    codonTableBodyEl.append(row);
+  }
+}
+
+function clearCodonUsage() {
+  codonTableBodyEl.innerHTML = '<tr><td colspan="3" class="fact-list-empty">No sequence yet.</td></tr>';
+}
+
 function handleInput() {
   const raw = textarea.value;
   const { normalized, valid } = renderValidationState(raw);
@@ -196,6 +230,7 @@ function handleInput() {
     orfPanel.hidden = true;
     clearFrames();
     clearGcMeter();
+    clearCodonUsage();
     renderOrfList([]);
     overlayEl.innerHTML = renderOverlayHtml(raw);
     return;
@@ -203,6 +238,7 @@ function handleInput() {
 
   renderFrames(normalized);
   renderGcMeter(normalized);
+  renderCodonUsage(normalized);
   state.orfs = findOrfs(normalized);
   renderOrfList(state.orfs);
   const orfRange = renderOrfHighlight();
