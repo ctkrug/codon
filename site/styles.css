@@ -226,6 +226,16 @@ main {
   overflow-y: auto;
 }
 
+/* Browsers auto-add scrollable overflow regions to the tab order (so
+   keyboard users can scroll them with arrow keys) even without an explicit
+   tabindex. Without this rule the resulting focus used only the browser's
+   unstyled default outline, breaking from the themed ring every other
+   focusable element gets. */
+.frame-viewer:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .frame-row {
   display: grid;
   grid-template-columns: 3em 1fr;
