@@ -11,6 +11,8 @@ import {
   mapNormalizedRangesToRaw,
   isSequenceTooLong,
   MAX_SEQUENCE_LENGTH,
+  isRawTooLong,
+  MAX_RAW_LENGTH,
 } from "../site/js/sequence.js";
 
 test("normalizeSequence strips whitespace and uppercases", () => {
@@ -94,4 +96,17 @@ test("mapNormalizedRangesToRaw stays fast with thousands of ranges over a long t
   const elapsed = Date.now() - started;
   assert.equal(mapped.length, ranges.length);
   assert.ok(elapsed < 1000, `expected mapNormalizedRangesToRaw to finish in under 1s, took ${elapsed}ms`);
+});
+
+test("isRawTooLong accepts a raw paste at or under its cap", () => {
+  assert.equal(isRawTooLong("A".repeat(MAX_RAW_LENGTH)), false);
+});
+
+test("isRawTooLong rejects a raw paste over its cap even if mostly whitespace", () => {
+  // isSequenceTooLong only sees the whitespace-stripped sequence, so a huge
+  // paste that's almost entirely blank padding around a few real bases
+  // would otherwise sail through undetected while still being long enough
+  // to slow the raw-text overlay render.
+  const raw = " ".repeat(MAX_RAW_LENGTH + 1) + "ACGT";
+  assert.equal(isRawTooLong(raw), true);
 });
