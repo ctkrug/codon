@@ -52,3 +52,14 @@ export function findOrfs(sequence) {
   ];
   return orfs.sort((a, b) => b.length - a.length);
 }
+
+// Maps an ORF's [start, end) coordinates back onto the original forward
+// sequence. Forward-frame ORFs already use those coordinates; reverse-frame
+// ORFs are indexed into the reverse complement, so the range is mirrored
+// across the sequence length to find the matching forward-strand slice.
+export function mapOrfToSequenceRange(orf, sequenceLength) {
+  if (orf.frame.startsWith("+")) {
+    return { start: orf.start, end: orf.end };
+  }
+  return { start: sequenceLength - orf.end, end: sequenceLength - orf.start };
+}
