@@ -53,6 +53,10 @@ test("gcContent computes percentage of G/C bases", () => {
   assert.equal(gcContent("ACGT"), 50);
 });
 
+test("gcContent returns 0 for an empty sequence instead of dividing by zero", () => {
+  assert.equal(gcContent(""), 0);
+});
+
 test("gcContent stays within [0, 100] and matches a manual G/C count", () => {
   fc.assert(
     fc.property(acgtString({ minLength: 1, maxLength: 200 }), (sequence) => {
