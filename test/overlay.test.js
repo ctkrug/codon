@@ -76,6 +76,22 @@ test("renderOverlayHtml nests a site marker inside an overlapping ORF mark", () 
   assert.ok(html.trim().endsWith("</mark>"));
 });
 
+test("renderOverlayHtml merges two overlapping siteRanges into one continuous marker", () => {
+  // Two restriction-site hits whose ranges overlap (e.g. two enzymes
+  // matching an overlapping stretch) must render as a single contiguous
+  // <span> covering their union, not close and immediately reopen at the
+  // overlap boundary.
+  const html = renderOverlayHtml("AAAAAAAA", {
+    siteRanges: [
+      { start: 0, end: 4 },
+      { start: 2, end: 6 },
+    ],
+  });
+  assert.equal((html.match(/class="site-mark"/g) ?? []).length, 1);
+  const base = '<span class="base-a">A</span>';
+  assert.equal(html, `<span class="site-mark">${base.repeat(6)}</span>${base.repeat(2)}`);
+});
+
 test("renderOverlayHtml stays fast with thousands of site ranges over a long text", () => {
   // Checking every character against every range independently is
   // O(length * ranges) — a realistic dense repeat (e.g. a tandem repeat of
