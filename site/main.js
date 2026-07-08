@@ -11,6 +11,7 @@ import { renderOverlayHtml } from "./js/overlay.js";
 import { sixFrameTranslation } from "./js/translate.js";
 import { codonUsage } from "./js/codonUsage.js";
 import { findRestrictionSites } from "./js/restrictionSites.js";
+import { EXAMPLE_SEQUENCES } from "./js/examples.js";
 
 const textarea = document.getElementById("sequence-input");
 const errorEl = document.getElementById("sequence-error");
@@ -33,6 +34,7 @@ const orfTitleEl = document.getElementById("orf-highlight-title");
 const orfListEl = document.getElementById("orf-list");
 const codonTableBodyEl = document.getElementById("codon-table-body");
 const siteListEl = document.getElementById("site-list");
+const loadExampleBtn = document.getElementById("load-example");
 
 // Tracks the current render's derived data so the ORF list's click handler
 // can re-highlight a selection without recomputing everything from scratch.
@@ -281,9 +283,20 @@ function handleInput() {
   overlayEl.innerHTML = renderOverlayHtml(raw, { orfRange, siteRanges: state.siteRanges });
 }
 
+let nextExampleIndex = 0;
+
+function loadNextExample() {
+  const example = EXAMPLE_SEQUENCES[nextExampleIndex];
+  nextExampleIndex = (nextExampleIndex + 1) % EXAMPLE_SEQUENCES.length;
+  textarea.value = example.sequence;
+  handleInput();
+  textarea.focus();
+}
+
 textarea.addEventListener("input", handleInput);
 textarea.addEventListener("scroll", () => {
   overlayEl.scrollTop = textarea.scrollTop;
   overlayEl.scrollLeft = textarea.scrollLeft;
 });
+loadExampleBtn.addEventListener("click", loadNextExample);
 handleInput();
