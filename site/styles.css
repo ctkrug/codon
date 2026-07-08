@@ -92,6 +92,44 @@ textarea:focus-visible {
   font-size: 0.9rem;
 }
 
+.helix-ribbon {
+  width: 100%;
+  max-width: 400px;
+  height: 24px;
+  flex-basis: 100%;
+}
+
+.helix-strand {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 700;
+  stroke-dashoffset: 700;
+  animation: draw-helix 1.2s var(--ease-out) forwards;
+}
+
+.helix-strand--a {
+  stroke: var(--base-a);
+}
+
+.helix-strand--g {
+  stroke: var(--base-g);
+  animation-delay: 80ms;
+}
+
+@keyframes draw-helix {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .helix-strand {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
 main {
   flex: 1;
   padding: var(--space-3) var(--space-4) var(--space-5);
