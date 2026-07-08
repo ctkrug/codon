@@ -20,7 +20,89 @@
   </header>
 
   <main id="top">
-    <p class="empty-state">The Codon workspace is under construction — check back soon.</p>
+    <section class="workspace" aria-label="Sequence workspace">
+      <div class="panel panel--input">
+        <div class="panel-head">
+          <h2>Paste a sequence</h2>
+          <button type="button" id="load-example" class="btn btn--ghost">Load example</button>
+        </div>
+        <label for="sequence-input" class="visually-hidden">DNA sequence</label>
+        <div class="sequence-input-wrap">
+          <div id="sequence-overlay" class="sequence-overlay" aria-hidden="true"></div>
+          <textarea
+            id="sequence-input"
+            class="sequence-input"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off"
+            placeholder="Paste a raw ACGT sequence, e.g. ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG..."
+            aria-describedby="sequence-error"
+          ></textarea>
+        </div>
+        <p id="sequence-error" class="sequence-error" role="alert"></p>
+        <p id="sequence-length" class="sequence-meta">0 bases</p>
+      </div>
+
+      <div class="panel panel--frames">
+        <h2>Six-frame translation</h2>
+        <p id="empty-frames" class="empty-state">
+          Paste a sequence above to see all six reading frames and the longest
+          open reading frame translate live.
+        </p>
+        <div id="frame-viewer" class="frame-viewer" hidden></div>
+      </div>
+
+      <div id="orf-highlight-panel" class="panel panel--orf-highlight" hidden>
+        <h2>Longest ORF</h2>
+        <p id="orf-highlight-meta" class="orf-highlight-meta"></p>
+        <p id="orf-highlight-protein" class="orf-highlight-protein" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <aside class="side-panels" aria-label="Sequence statistics">
+      <div class="sticky-note sticky-note--gc">
+        <h3>GC content</h3>
+        <div id="gc-meter" class="gc-meter" role="img" aria-label="GC content: no sequence yet">
+          <div class="gc-meter-segment" data-base="a" id="gc-seg-a"></div>
+          <div class="gc-meter-segment" data-base="c" id="gc-seg-c"></div>
+          <div class="gc-meter-segment" data-base="g" id="gc-seg-g"></div>
+          <div class="gc-meter-segment" data-base="t" id="gc-seg-t"></div>
+        </div>
+        <p class="gc-meter-value" id="gc-value" aria-live="polite">—</p>
+      </div>
+
+      <div class="sticky-note sticky-note--orfs">
+        <h3>Open reading frames</h3>
+        <ul id="orf-list" class="fact-list">
+          <li class="fact-list-empty">No sequence yet.</li>
+        </ul>
+      </div>
+
+      <div class="sticky-note sticky-note--codon">
+        <h3>Codon usage</h3>
+        <table class="codon-table">
+          <thead>
+            <tr>
+              <th scope="col">Codon</th>
+              <th scope="col">Count</th>
+              <th scope="col">%</th>
+            </tr>
+          </thead>
+          <tbody id="codon-table-body">
+            <tr>
+              <td colspan="3" class="fact-list-empty">No sequence yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sticky-note sticky-note--sites">
+        <h3>Restriction sites</h3>
+        <ul id="site-list" class="fact-list">
+          <li class="fact-list-empty">No sequence yet.</li>
+        </ul>
+      </div>
+    </aside>
   </main>
 
   <footer class="site-footer">
