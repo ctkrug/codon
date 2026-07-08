@@ -225,6 +225,134 @@ main {
   font-style: normal;
 }
 
+.btn {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  transition: transform 150ms var(--ease-out), background 150ms var(--ease-out),
+    color 150ms var(--ease-out);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--accent);
+}
+
+.btn--ghost:hover {
+  background: var(--accent);
+  color: var(--surface-1);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sequence-input-wrap {
+  position: relative;
+  width: 100%;
+  height: min(50vh, 420px);
+}
+
+.sequence-overlay,
+.sequence-input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: var(--space-2);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+  box-sizing: border-box;
+}
+
+.sequence-overlay {
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  color: transparent;
+  overflow: auto;
+  pointer-events: none;
+}
+
+.sequence-input {
+  background: transparent;
+  color: transparent;
+  caret-color: var(--text);
+  border: 1px solid var(--text-muted);
+  border-radius: var(--radius);
+  resize: vertical;
+  overflow: auto;
+}
+
+.sequence-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sequence-input.is-empty {
+  color: var(--text-muted);
+}
+
+.sequence-input.is-invalid {
+  border-color: var(--danger);
+}
+
+.base-a {
+  color: var(--base-a);
+}
+
+.base-c {
+  color: var(--base-c);
+}
+
+.base-g {
+  color: var(--base-g);
+}
+
+.base-t {
+  color: var(--base-t);
+}
+
+.base-invalid {
+  color: var(--danger);
+  text-decoration: underline wavy var(--danger);
+}
+
+.orf-mark {
+  background: rgba(47, 75, 124, 0.16);
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(47, 75, 124, 0.35);
+}
+
+.site-mark {
+  background: rgba(179, 69, 44, 0.18);
+  border-bottom: 2px solid var(--accent-support);
+}
+
+.sequence-error {
+  min-height: 1.4em;
+  margin: var(--space-2) 0 0;
+  color: var(--danger);
+  font-weight: 500;
+}
+
+.sequence-meta {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
 .site-footer {
   padding: var(--space-3) var(--space-4);
   color: var(--text-muted);
