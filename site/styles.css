@@ -374,7 +374,7 @@ main {
   outline-offset: 2px;
 }
 
-li[aria-selected="true"] .orf-list-item {
+.orf-list-item[aria-selected="true"] {
   background: var(--accent);
   color: var(--surface-1);
   border-color: var(--accent);
@@ -432,6 +432,7 @@ li[aria-selected="true"] .orf-list-item {
   border-radius: var(--radius);
   border: 1px solid var(--accent);
   padding: var(--space-1) var(--space-2);
+  min-height: 44px;
   cursor: pointer;
   transition: transform 150ms var(--ease-out), background 150ms var(--ease-out),
     color 150ms var(--ease-out);
