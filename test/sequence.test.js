@@ -7,6 +7,7 @@ import {
   gcContent,
   reverseComplement,
   baseCounts,
+  mapNormalizedRangeToRaw,
 } from "../site/js/sequence.js";
 
 test("normalizeSequence strips whitespace and uppercases", () => {
@@ -36,4 +37,22 @@ test("reverseComplement flips and complements the strand", () => {
 test("baseCounts tallies each base and reports zero for bases absent", () => {
   assert.deepEqual(baseCounts("AATTGGGGC"), { A: 2, C: 1, G: 4, T: 2 });
   assert.deepEqual(baseCounts(""), { A: 0, C: 0, G: 0, T: 0 });
+});
+
+test("mapNormalizedRangeToRaw is a passthrough when the raw text has no whitespace", () => {
+  assert.deepEqual(mapNormalizedRangeToRaw("ACGTACGT", 2, 5), { start: 2, end: 5 });
+});
+
+test("mapNormalizedRangeToRaw skips over embedded whitespace", () => {
+  const raw = "AC GT";
+  assert.deepEqual(mapNormalizedRangeToRaw(raw, 1, 3), { start: 1, end: 4 });
+  assert.equal(raw.slice(1, 4), "C G");
+});
+
+test("mapNormalizedRangeToRaw handles an empty range at the start", () => {
+  assert.deepEqual(mapNormalizedRangeToRaw("ACGT", 0, 0), { start: 0, end: 0 });
+});
+
+test("mapNormalizedRangeToRaw handles a range reaching the end of the text", () => {
+  assert.deepEqual(mapNormalizedRangeToRaw("ACGT", 2, 4), { start: 2, end: 4 });
 });
