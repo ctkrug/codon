@@ -65,8 +65,11 @@ a rich-text editor dependency.
 
 ## Testing
 
-`npm test` runs `node --test test/` — no browser, no DOM. Every `site/js/*`
-module is pure and unit-tested directly; `main.js` (DOM wiring) is exercised
+`npm install` (fast-check only — the site itself ships zero dependencies)
+then `npm test` runs `node --test test/` — no browser, no DOM. Every
+`site/js/*` module is pure and unit-tested directly, with property-based
+tests (fast-check) alongside example-based ones for the parser/math-shaped
+modules (sequence, orf, translate); `main.js` (DOM wiring) is exercised
 manually in a real browser instead, since it has no logic of its own to unit
 test.
 
