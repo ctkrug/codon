@@ -166,6 +166,65 @@ main {
   flex-wrap: wrap;
 }
 
+.sticky-note {
+  background: var(--surface-1);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space-3);
+  transition: transform 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
+}
+
+.sticky-note h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  margin: 0 0 var(--space-2);
+}
+
+.sticky-note--gc {
+  transform: rotate(-1deg);
+}
+
+.sticky-note--orfs {
+  transform: rotate(0.75deg);
+}
+
+.sticky-note--codon {
+  transform: rotate(-0.5deg);
+}
+
+.sticky-note--sites {
+  transform: rotate(1.25deg);
+}
+
+.sticky-note:hover,
+.sticky-note:focus-within {
+  transform: rotate(0deg);
+  box-shadow: 0 4px 14px rgba(43, 38, 32, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticky-note {
+    transform: none;
+    transition: none;
+  }
+}
+
+.fact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.fact-list-empty {
+  color: var(--text-muted);
+  font-style: normal;
+}
+
 .site-footer {
   padding: var(--space-3) var(--space-4);
   color: var(--text-muted);
