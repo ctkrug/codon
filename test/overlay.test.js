@@ -75,3 +75,18 @@ test("renderOverlayHtml nests a site marker inside an overlapping ORF mark", () 
   assert.match(html, /<mark class="orf-mark"><span class="base-a">A<\/span><span class="base-a">A<\/span><span class="site-mark">/);
   assert.ok(html.trim().endsWith("</mark>"));
 });
+
+test("renderOverlayHtml stays fast with thousands of site ranges over a long text", () => {
+  // Checking every character against every range independently is
+  // O(length * ranges) — a realistic dense repeat (e.g. a tandem repeat of
+  // a 6bp restriction site) can produce thousands of overlapping ranges and
+  // hang the tab. This pins it to a size a real paste could hit.
+  const rawText = "GAATTC".repeat(16667); // ~100,000 characters
+  const siteRanges = [];
+  for (let i = 0; i < rawText.length; i += 6) siteRanges.push({ start: i, end: i + 6 });
+  const started = Date.now();
+  const html = renderOverlayHtml(rawText, { siteRanges });
+  const elapsed = Date.now() - started;
+  assert.ok(html.includes('class="site-mark"'));
+  assert.ok(elapsed < 1000, `expected renderOverlayHtml to finish in under 1s, took ${elapsed}ms`);
+});
