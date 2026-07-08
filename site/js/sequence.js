@@ -51,3 +51,25 @@ export function baseCounts(sequence) {
   }
   return counts;
 }
+
+// Maps a [start, end) range over the whitespace-stripped, upper-cased
+// sequence (as produced by normalizeSequence) back onto the matching range
+// in the raw text the user actually typed, so a highlight computed from
+// normalized coordinates can be drawn on the textarea overlay without the
+// two texts needing to be identical.
+export function mapNormalizedRangeToRaw(raw, start, end) {
+  let normalizedIndex = 0;
+  let rawStart = null;
+  let rawEnd = raw.length;
+  for (let i = 0; i < raw.length; i += 1) {
+    if (/\s/.test(raw[i])) continue;
+    if (normalizedIndex === start && rawStart === null) rawStart = i;
+    if (normalizedIndex === end) {
+      rawEnd = i;
+      break;
+    }
+    normalizedIndex += 1;
+  }
+  if (rawStart === null) rawStart = raw.length;
+  return { start: rawStart, end: rawEnd };
+}
