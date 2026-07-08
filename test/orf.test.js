@@ -61,3 +61,21 @@ test("findOrfs bounds total ORFs when thousands of starts share one distant stop
   assert.ok(orfs.length < 10000, `expected findOrfs to cap runaway ORF counts, got ${orfs.length}`);
   assert.ok(elapsed < 2000, `expected findOrfs to finish in under 2s, took ${elapsed}ms`);
 });
+
+test("findOrfs's output cap never hides a genuinely longer ORF in a later-scanned frame", () => {
+  // A dense +1-frame region alone produces 600 nested ORFs — more than the
+  // output cap. A cap applied *during* scanning (frame by frame, in +1/+2/
+  // +3/-1/-2/-3 order) would exhaust its budget on these short/medium
+  // nested ORFs before frame +3 (scanned later) is even examined, silently
+  // dropping a real, much longer ORF placed there. The cap must only ever
+  // trim the shortest entries after every frame has been scanned and
+  // sorted, so the true longest ORF always survives regardless of frame.
+  const denseRegion = "ATG".repeat(600) + "TAA"; // 600 nested ORFs in frame +1
+  const filler = "CC"; // shifts alignment so the next ATG lands in frame +3
+  const longOrf = "ATG" + "AAA".repeat(1000) + "TAA"; // 3006 bases, longer than any nested ORF above
+  const sequence = denseRegion + filler + longOrf;
+
+  const orfs = findOrfs(sequence);
+  assert.equal(orfs[0].length, 3006);
+  assert.equal(orfs[0].frame, "+3");
+});
