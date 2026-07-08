@@ -520,6 +520,11 @@ main {
   overflow: auto;
 }
 
+.sequence-input::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
 .sequence-input:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
