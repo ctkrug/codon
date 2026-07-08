@@ -1,0 +1,19 @@
+{
+  "name": "codon",
+  "version": "0.1.0",
+  "description": "A fast, beautiful bioinformatics scratchpad for the browser",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "author": "Charlie Krug",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ctkrug/codon"
+  },
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
