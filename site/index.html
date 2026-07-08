@@ -36,6 +36,7 @@
   </header>
 
   <main id="top">
+    <p id="live-status" class="visually-hidden" aria-live="polite"></p>
     <section class="workspace" aria-label="Sequence workspace">
       <div class="panel panel--input">
         <div class="panel-head">
@@ -71,7 +72,7 @@
       <div id="orf-highlight-panel" class="panel panel--orf-highlight" hidden>
         <h2 id="orf-highlight-title">Longest ORF</h2>
         <p id="orf-highlight-meta" class="orf-highlight-meta"></p>
-        <p id="orf-highlight-protein" class="orf-highlight-protein" aria-live="polite"></p>
+        <p id="orf-highlight-protein" class="orf-highlight-protein"></p>
       </div>
     </section>
 
@@ -84,7 +85,7 @@
           <div class="gc-meter-segment" data-base="g" id="gc-seg-g"></div>
           <div class="gc-meter-segment" data-base="t" id="gc-seg-t"></div>
         </div>
-        <p class="gc-meter-value" id="gc-value" aria-live="polite">—</p>
+        <p class="gc-meter-value" id="gc-value">—</p>
       </div>
 
       <div class="sticky-note sticky-note--orfs">
