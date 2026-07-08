@@ -342,6 +342,15 @@ li[aria-selected="true"] .orf-list-item {
   border-color: var(--accent);
 }
 
+.site-list-item {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  background: var(--surface-2);
+  border-left: 3px solid var(--accent-support);
+  border-radius: var(--radius);
+  padding: var(--space-1) var(--space-2);
+}
+
 .codon-table {
   width: 100%;
   border-collapse: collapse;
