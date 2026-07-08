@@ -3,6 +3,7 @@ import {
   isValidSequence,
   findInvalidCharacters,
   mapNormalizedRangeToRaw,
+  mapNormalizedRangesToRaw,
   baseCounts,
   gcContent,
   isSequenceTooLong,
@@ -250,15 +251,17 @@ function renderRestrictionSites(normalized, raw) {
     return [];
   }
 
-  const ranges = sites.map((site) => {
+  for (const site of sites) {
     const item = document.createElement("li");
     item.className = "site-list-item";
     item.textContent = `${site.name} · ${site.site} · position ${site.start}`;
     siteListEl.append(item);
-    return mapNormalizedRangeToRaw(raw, site.start, site.start + site.site.length);
-  });
+  }
 
-  return ranges;
+  return mapNormalizedRangesToRaw(
+    raw,
+    sites.map((site) => ({ start: site.start, end: site.start + site.site.length })),
+  );
 }
 
 function clearRestrictionSites() {
