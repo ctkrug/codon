@@ -342,6 +342,42 @@ li[aria-selected="true"] .orf-list-item {
   border-color: var(--accent);
 }
 
+.codon-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.codon-table thead th {
+  text-align: left;
+  color: var(--text-muted);
+  font-weight: 600;
+  border-bottom: 2px solid var(--surface-2);
+  padding: var(--space-1);
+}
+
+.codon-table tbody {
+  display: block;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.codon-table thead tr,
+.codon-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.codon-table td {
+  padding: var(--space-1);
+  border-bottom: 1px solid var(--surface-2);
+}
+
+.codon-table tbody tr:hover {
+  background: var(--surface-2);
+}
+
 .btn {
   font-family: var(--font-ui);
   font-size: 0.9rem;
