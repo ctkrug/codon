@@ -14,6 +14,19 @@ export function isSequenceTooLong(sequence) {
   return sequence.length > MAX_SEQUENCE_LENGTH;
 }
 
+// isSequenceTooLong only looks at the whitespace-stripped sequence, so a
+// paste that's mostly whitespace (megabytes of blank padding around a few
+// real bases) would sail through it while still being long enough to slow
+// the raw-text overlay render, which scales with the raw, unstripped
+// length. A generous multiple of the real cap comfortably covers normal
+// FASTA line-wrapping overhead (a percent or two) while still catching
+// that pathological case.
+export const MAX_RAW_LENGTH = MAX_SEQUENCE_LENGTH * 3;
+
+export function isRawTooLong(raw) {
+  return raw.length > MAX_RAW_LENGTH;
+}
+
 // Strips whitespace/newlines a user might paste from FASTA-style sources and
 // uppercases the result; does not touch non-ACGT characters so callers can
 // surface a validation error instead of silently discarding data.
