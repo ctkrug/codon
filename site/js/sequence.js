@@ -41,3 +41,13 @@ export function reverseComplement(sequence) {
   }
   return result;
 }
+
+// Per-base tallies for the GC meter's stacked bar, always reporting all
+// four bases (even at zero) so the caller doesn't need to guard missing keys.
+export function baseCounts(sequence) {
+  const counts = { A: 0, C: 0, G: 0, T: 0 };
+  for (const base of sequence) {
+    if (base in counts) counts[base] += 1;
+  }
+  return counts;
+}
