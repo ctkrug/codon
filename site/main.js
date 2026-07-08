@@ -3,6 +3,8 @@ import {
   isValidSequence,
   findInvalidCharacters,
   mapNormalizedRangeToRaw,
+  baseCounts,
+  gcContent,
 } from "./js/sequence.js";
 import { findOrfs, mapOrfToSequenceRange } from "./js/orf.js";
 import { renderOverlayHtml } from "./js/overlay.js";
@@ -17,6 +19,14 @@ const orfMetaEl = document.getElementById("orf-highlight-meta");
 const orfProteinEl = document.getElementById("orf-highlight-protein");
 const emptyFramesEl = document.getElementById("empty-frames");
 const frameViewerEl = document.getElementById("frame-viewer");
+const gcMeterEl = document.getElementById("gc-meter");
+const gcValueEl = document.getElementById("gc-value");
+const gcSegments = {
+  a: document.getElementById("gc-seg-a"),
+  c: document.getElementById("gc-seg-c"),
+  g: document.getElementById("gc-seg-g"),
+  t: document.getElementById("gc-seg-t"),
+};
 
 function describeInvalidCharacters(chars) {
   const list = chars.map((c) => (c === " " ? "space" : `"${c}"`)).join(", ");
@@ -96,6 +106,26 @@ function clearFrames() {
   emptyFramesEl.hidden = false;
 }
 
+function renderGcMeter(normalized) {
+  const counts = baseCounts(normalized);
+  const total = normalized.length;
+  for (const [base, el] of Object.entries(gcSegments)) {
+    const pct = total === 0 ? 0 : (counts[base.toUpperCase()] / total) * 100;
+    el.style.width = `${pct}%`;
+  }
+  const pct = gcContent(normalized);
+  gcValueEl.textContent = `${pct.toFixed(1)}% GC`;
+  gcMeterEl.setAttribute("aria-label", `GC content: ${pct.toFixed(1)} percent`);
+}
+
+function clearGcMeter() {
+  for (const el of Object.values(gcSegments)) {
+    el.style.width = "0%";
+  }
+  gcValueEl.textContent = "—";
+  gcMeterEl.setAttribute("aria-label", "GC content: no sequence yet");
+}
+
 function handleInput() {
   const raw = textarea.value;
   const { normalized, valid } = renderValidationState(raw);
@@ -103,11 +133,13 @@ function handleInput() {
   if (!valid) {
     orfPanel.hidden = true;
     clearFrames();
+    clearGcMeter();
     overlayEl.innerHTML = renderOverlayHtml(raw);
     return;
   }
 
   renderFrames(normalized);
+  renderGcMeter(normalized);
   const orfRange = renderLongestOrf(normalized, raw);
   overlayEl.innerHTML = renderOverlayHtml(raw, { orfRange });
 }
