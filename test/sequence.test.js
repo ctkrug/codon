@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import fc from "fast-check";
 import {
   normalizeSequence,
   isValidSequence,
@@ -37,6 +38,17 @@ test("gcContent computes percentage of G/C bases", () => {
 
 test("reverseComplement flips and complements the strand", () => {
   assert.equal(reverseComplement("ATGC"), "GCAT");
+});
+
+const acgtString = (opts) =>
+  fc.array(fc.constantFrom("A", "C", "G", "T"), opts).map((bases) => bases.join(""));
+
+test("reverseComplement is its own inverse for any ACGT sequence", () => {
+  fc.assert(
+    fc.property(acgtString({ maxLength: 200 }), (sequence) => {
+      assert.equal(reverseComplement(reverseComplement(sequence)), sequence);
+    }),
+  );
 });
 
 test("baseCounts tallies each base and reports zero for bases absent", () => {
