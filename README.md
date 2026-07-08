@@ -1,67 +1,80 @@
 # Codon
 
-A fast, beautiful bioinformatics scratchpad for the browser. Paste a raw DNA
-sequence and instantly see its GC content, all six reading frames, every open
-reading frame (ORF), and the translated protein — no server, no login, no lab
-software required.
+**▶ Live demo — [apps.charliekrug.com/codon](https://apps.charliekrug.com/codon/)**
 
-## Why
+[![CI](https://github.com/ctkrug/codon/actions/workflows/ci.yml/badge.svg)](https://github.com/ctkrug/codon/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Real bioinformatics tools (Geneious, SnapGene, ExPASy) are built for
-professionals and gatekept behind installs, accounts, or clunky UIs. Codon is
-for the hobbyist, the student, and the curious: paste a sequence, see
-everything about it, live, in one page.
+Read a DNA sequence in your browser. Paste a raw sequence and Codon works out
+its GC content, all six reading frames, every open reading frame (ORF), the
+translated protein, codon usage, and common restriction sites, live, on your
+own machine. No install, no login, no server.
+
+![Codon showing a GFP fragment: base-colored sequence, GC meter, six-frame translation, ORF list, and codon usage](docs/screenshot.png)
+
+## Who it's for
+
+Biology students and hobbyists who want a quick look at a stretch of DNA
+without firing up SnapGene, Geneious, or a Benchling account. You found a gene
+on NCBI, you want to see its reading frames and the protein it codes for, and
+you want it now, in a browser tab.
 
 ## What it does
 
-- **GC content** — live percentage as you type or paste, with a stacked
-  per-base meter.
-- **Six-frame translation** — all three forward and three reverse-complement
-  reading frames, translated to protein live on every edit.
-- **ORF detection** — every open reading frame found across all six frames,
-  listed longest-first; the longest is highlighted directly on the sequence
-  by default, and clicking any other one in the list highlights and scrolls
-  to it instead.
-- **Codon usage stats** — every codon present, with its count and share of
-  the sequence, sorted by frequency.
-- **Restriction site finder** — common restriction enzyme recognition sites
-  located, listed by name and position, and marked inline on the sequence.
-- **Load example** — two real coding sequences to try instantly, no pasting
-  required.
+- **GC content:** a live percentage with a stacked bar split by A, C, G, and
+  T, so base composition reads at a glance.
+- **Six-frame translation:** all three forward frames and all three
+  reverse-complement frames, translated to protein and refreshed on every edit.
+- **ORF detection:** every ATG-to-stop run across all six frames, listed
+  longest first. The longest is highlighted directly on the sequence; clicking
+  any other one in the list highlights and scrolls to it.
+- **Codon usage:** every codon present with its count and share, sorted by
+  frequency.
+- **Restriction sites:** matches for common Type II enzymes (EcoRI, BamHI,
+  HindIII, NotI, XhoI, PstI), listed by position and marked inline.
+- **Load example:** two real coding sequences (a GFP fragment and the lacZ
+  start) to try instantly, no pasting required.
 
-## The wow moment
+## Usage
 
-Paste a raw `ACGT...` sequence. The six reading frames light up immediately,
-the longest ORF is highlighted, and its translated protein sequence renders
-live as you scroll through the DNA — all client-side, all instant.
+Open the [live demo](https://apps.charliekrug.com/codon/), paste a raw `ACGT`
+sequence into the box (or press **Load example**), and read the results as they
+update. Whitespace and line breaks from FASTA files are stripped automatically;
+any character that is not A, C, G, or T is flagged with a clear message.
 
-## Stack
+The genetic code is the NCBI standard translation table 1. Ambiguous or
+incomplete codons translate to `X`. Sequences up to 100,000 bases are supported;
+longer pastes are turned away rather than freezing the tab.
 
-Plain JavaScript (ES modules), no framework, no build step. Ships as a static
-site — HTML, CSS, and JS only — so it runs anywhere a browser does. See
-[`docs/VISION.md`](docs/VISION.md) for the design rationale,
-[`docs/DESIGN.md`](docs/DESIGN.md) for the art direction, and
-[`docs/BACKLOG.md`](docs/BACKLOG.md) for the build plan.
-
-## Development
+## Run it locally
 
 ```sh
-npm install # install fast-check (property-based tests only — the site itself ships no dependencies)
+npm install # installs fast-check (property-based tests only; the site ships zero dependencies)
 npm test    # run the unit test suite (node:test)
 ```
 
-Then serve `site/` with any static file server and open it in a browser —
-no build step required:
+Then serve the `site/` directory with any static file server:
 
 ```sh
 cd site && python3 -m http.server 8080   # or `npx serve`, etc.
 ```
 
-Opening `site/index.html` directly via a `file://` URL will not work: browsers
+Opening `site/index.html` directly over a `file://` URL will not work: browsers
 block cross-origin `<script type="module">` loads under the `file://` scheme.
-The entire `site/` directory is the deployable app: relative asset paths only,
-so it works unmodified from any subpath a static server serves it from.
+The whole `site/` directory is the deployable app and uses relative asset paths
+only, so it runs unmodified from any subpath a static server serves it from.
+
+## Stack
+
+Plain JavaScript (ES modules), no framework, no build step. Ships as a static
+site. See [`docs/VISION.md`](docs/VISION.md) for the rationale,
+[`docs/DESIGN.md`](docs/DESIGN.md) for the art direction, and
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for how the code is laid out.
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+Released under the MIT license. See [`LICENSE`](LICENSE).
+
+---
+
+More of Charlie's projects → [apps.charliekrug.com](https://apps.charliekrug.com)
