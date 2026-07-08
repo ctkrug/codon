@@ -125,8 +125,97 @@
     </aside>
   </main>
 
+  <section class="guide" aria-labelledby="guide-title">
+    <div class="guide-inner">
+      <h2 id="guide-title">Read a DNA sequence in your browser</h2>
+      <p class="guide-lede">
+        Codon is a free tool for biology students and hobbyists who want to
+        inspect a stretch of DNA without installing SnapGene or signing into
+        Benchling. Paste a sequence and it works out the GC content, all six
+        reading frames, every open reading frame, the protein each frame
+        codes for, the codon counts, and any common restriction sites. It
+        all runs on your own machine and updates as you type.
+      </p>
+
+      <h3>What Codon shows you</h3>
+      <ul class="guide-list">
+        <li>
+          <strong>GC content</strong> as a live percentage with a stacked bar
+          split by A, C, G and T, so base composition reads at a glance.
+        </li>
+        <li>
+          <strong>Six-frame translation</strong>: all three forward frames and
+          all three reverse-complement frames, translated to protein and
+          refreshed on every keystroke.
+        </li>
+        <li>
+          <strong>Open reading frames</strong>: every ATG-to-stop run across all
+          six frames, sorted longest first. The longest is boxed on the
+          sequence, and clicking any other one in the list jumps to it.
+        </li>
+        <li>
+          <strong>Codon usage</strong>: every codon in the sequence with its
+          count and share, sorted by frequency.
+        </li>
+        <li>
+          <strong>Restriction sites</strong>: matches for common Type II enzymes
+          (EcoRI, BamHI, HindIII, NotI, XhoI, PstI) marked inline and listed by
+          position.
+        </li>
+      </ul>
+
+      <h3>How to use it</h3>
+      <ol class="guide-list">
+        <li>
+          Paste a raw DNA sequence into the box, or press <em>Load example</em>
+          to try a real gene. Whitespace and line breaks from FASTA files are
+          ignored; anything that is not A, C, G or T is flagged.
+        </li>
+        <li>
+          Watch the GC content and reading frames update. The longest open
+          reading frame is highlighted directly on the sequence.
+        </li>
+        <li>
+          Click any ORF in the list to highlight it on the sequence and scroll
+          to it.
+        </li>
+      </ol>
+
+      <h3>Questions</h3>
+      <dl class="faq">
+        <dt>Is my sequence uploaded anywhere?</dt>
+        <dd>
+          No. Codon runs entirely in your browser. Nothing you paste leaves your
+          computer, and there is no account or server behind it.
+        </dd>
+        <dt>What is an open reading frame?</dt>
+        <dd>
+          A stretch that starts at an ATG start codon and runs to the next
+          in-frame stop codon. Codon scans all six frames and lists every one it
+          finds, longest first.
+        </dd>
+        <dt>Which genetic code does it use?</dt>
+        <dd>
+          The standard genetic code (NCBI translation table 1). Ambiguous or
+          incomplete codons translate to X.
+        </dd>
+        <dt>How long a sequence can I paste?</dt>
+        <dd>
+          Up to 100,000 bases. Codon is built for genes, operons and plasmid
+          fragments rather than whole genomes, so longer pastes are turned away
+          with a message instead of freezing the tab.
+        </dd>
+        <dt>Does it cost anything?</dt>
+        <dd>
+          No. Codon is free and open source under the MIT license.
+        </dd>
+      </dl>
+    </div>
+  </section>
+
   <footer class="site-footer">
     <p>Built by Charlie Krug &middot; <a href="https://github.com/ctkrug/codon">source on GitHub</a></p>
+    <p><a href="https://apps.charliekrug.com">More by Charlie Krug &rarr; apps.charliekrug.com</a></p>
   </footer>
 
   <script type="module" src="main.js"></script>
