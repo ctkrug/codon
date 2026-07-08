@@ -166,6 +166,54 @@ main {
   flex-wrap: wrap;
 }
 
+.frame-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.frame-row {
+  display: grid;
+  grid-template-columns: 3em 1fr;
+  gap: var(--space-2);
+  align-items: start;
+  padding: var(--space-1);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.frame-label {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.frame-protein {
+  font-family: var(--font-ui);
+  word-break: break-all;
+}
+
+.panel--orf-highlight {
+  border-left: 4px solid var(--accent);
+}
+
+.orf-highlight-meta {
+  margin: 0 0 var(--space-1);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.orf-highlight-protein {
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  word-break: break-all;
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  padding: var(--space-2);
+  margin: 0;
+}
+
 .sticky-note {
   background: var(--surface-1);
   border-radius: var(--radius);
