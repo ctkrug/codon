@@ -1,7 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import fc from "fast-check";
 import { findOrfs, mapOrfToSequenceRange } from "../site/js/orf.js";
 import { reverseComplement } from "../site/js/sequence.js";
+
+const acgtString = (opts) =>
+  fc.array(fc.constantFrom("A", "C", "G", "T"), opts).map((bases) => bases.join(""));
 
 test("findOrfs locates an ATG-to-stop run on the forward strand", () => {
   const orfs = findOrfs("CCATGGCCTAACC");
@@ -21,6 +25,30 @@ test("findOrfs returns results sorted longest first", () => {
 test("findOrfs returns no ORFs when there is no start codon", () => {
   const orfs = findOrfs("CCCCCCCCC");
   assert.equal(orfs.length, 0);
+});
+
+test("findOrfs doesn't crash on sequences shorter than a frame's offset", () => {
+  // A 1-base sequence in frame +3/-3 (offset 2) makes strand.length - offset
+  // negative; a naive `new Array(negative)` throws RangeError instead of
+  // reporting no ORFs for this perfectly valid, if minimal, sequence.
+  assert.deepEqual(findOrfs(""), []);
+  assert.deepEqual(findOrfs("A"), []);
+  assert.deepEqual(findOrfs("AC"), []);
+});
+
+test("every ORF findOrfs returns is internally consistent", () => {
+  fc.assert(
+    fc.property(acgtString({ minLength: 0, maxLength: 150 }), (sequence) => {
+      for (const orf of findOrfs(sequence)) {
+        assert.ok(orf.start < orf.end, "start must precede end");
+        assert.equal((orf.end - orf.start) % 3, 0, "span must be a whole number of codons");
+        assert.equal(orf.end - orf.start, orf.length);
+        assert.equal(orf.protein.length, orf.length / 3);
+        assert.equal(orf.protein.at(-1), "*", "an ORF always ends on a stop codon");
+        assert.match(orf.frame, /^[+-][1-3]$/);
+      }
+    }),
+  );
 });
 
 test("mapOrfToSequenceRange passes forward-frame coordinates through unchanged", () => {
