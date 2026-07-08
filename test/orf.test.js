@@ -36,3 +36,15 @@ test("mapOrfToSequenceRange maps a reverse-frame ORF back onto the matching forw
   const { start, end } = mapOrfToSequenceRange(orfs[0], sequence.length);
   assert.equal(reverseComplement(sequence.slice(start, end)), known);
 });
+
+test("findOrfs stays roughly linear on a long run of in-frame starts with no stop", () => {
+  // A repeating ATG with no in-frame stop codon anywhere is the worst case
+  // for a naive scan-from-every-start implementation (O(n^2)). This should
+  // stay fast even at a size a real user could plausibly paste.
+  const sequence = "ATG".repeat(12000); // 36,000 bases
+  const started = Date.now();
+  const orfs = findOrfs(sequence);
+  const elapsed = Date.now() - started;
+  assert.equal(orfs.length, 0);
+  assert.ok(elapsed < 1000, `expected findOrfs to finish in under 1s, took ${elapsed}ms`);
+});
