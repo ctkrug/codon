@@ -35,6 +35,7 @@ const orfListEl = document.getElementById("orf-list");
 const codonTableBodyEl = document.getElementById("codon-table-body");
 const siteListEl = document.getElementById("site-list");
 const loadExampleBtn = document.getElementById("load-example");
+const liveStatusEl = document.getElementById("live-status");
 
 // Tracks the current render's derived data so the ORF list's click handler
 // can re-highlight a selection without recomputing everything from scratch.
@@ -270,6 +271,7 @@ function handleInput() {
     clearRestrictionSites();
     renderOrfList([]);
     overlayEl.innerHTML = renderOverlayHtml(raw);
+    liveStatusEl.textContent = normalized.length === 0 ? "" : "Sequence contains invalid characters.";
     return;
   }
 
@@ -281,6 +283,10 @@ function handleInput() {
   renderOrfList(state.orfs);
   const orfRange = renderOrfHighlight();
   overlayEl.innerHTML = renderOverlayHtml(raw, { orfRange, siteRanges: state.siteRanges });
+
+  liveStatusEl.textContent =
+    `${normalized.length} bases, ${gcContent(normalized).toFixed(1)}% GC, ` +
+    `${state.orfs.length} ORF${state.orfs.length === 1 ? "" : "s"} found.`;
 }
 
 let nextExampleIndex = 0;
