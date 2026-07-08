@@ -1,0 +1,17 @@
+title = "codon gitleaks config"
+
+[extend]
+# Keep every default rule active; we only add a scoped allowlist below.
+useDefault = true
+
+[allowlist]
+description = "Curated DNA example sequences, not credentials"
+# site/js/examples.js ships real nucleotide strings (GFP fragment, lacZ
+# start) as sample data for the "Load example" button. Runs of uppercase
+# A/C/G/T occasionally collide with the aws-access-token rule's 20-char
+# alphanumeric pattern purely by chance (e.g. "ACCATTATCAACAAAATACT"
+# reads like an AWS access key ID). The file holds only sequence/name/
+# description string literals, so allowlisting it carries no real risk.
+paths = [
+  '''site/js/examples\.js''',
+]
