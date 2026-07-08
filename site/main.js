@@ -10,6 +10,7 @@ import { findOrfs, mapOrfToSequenceRange } from "./js/orf.js";
 import { renderOverlayHtml } from "./js/overlay.js";
 import { sixFrameTranslation } from "./js/translate.js";
 import { codonUsage } from "./js/codonUsage.js";
+import { findRestrictionSites } from "./js/restrictionSites.js";
 
 const textarea = document.getElementById("sequence-input");
 const errorEl = document.getElementById("sequence-error");
@@ -31,10 +32,11 @@ const gcSegments = {
 const orfTitleEl = document.getElementById("orf-highlight-title");
 const orfListEl = document.getElementById("orf-list");
 const codonTableBodyEl = document.getElementById("codon-table-body");
+const siteListEl = document.getElementById("site-list");
 
 // Tracks the current render's derived data so the ORF list's click handler
 // can re-highlight a selection without recomputing everything from scratch.
-const state = { normalized: "", raw: "", orfs: [], selectedOrfIndex: 0 };
+const state = { normalized: "", raw: "", orfs: [], selectedOrfIndex: 0, siteRanges: [] };
 
 function describeInvalidCharacters(chars) {
   const list = chars.map((c) => (c === " " ? "space" : `"${c}"`)).join(", ");
@@ -99,7 +101,10 @@ function applyOrfSelection(index, { scroll = false } = {}) {
   state.selectedOrfIndex = index;
   renderOrfListSelection();
   const rawRange = renderOrfHighlight();
-  overlayEl.innerHTML = renderOverlayHtml(state.raw, { orfRange: rawRange });
+  overlayEl.innerHTML = renderOverlayHtml(state.raw, {
+    orfRange: rawRange,
+    siteRanges: state.siteRanges,
+  });
   if (scroll) scrollToRawRange(rawRange);
 }
 
@@ -218,6 +223,35 @@ function clearCodonUsage() {
   codonTableBodyEl.innerHTML = '<tr><td colspan="3" class="fact-list-empty">No sequence yet.</td></tr>';
 }
 
+// Renders the restriction site list and returns each hit's raw-text range so
+// the overlay can mark all of them inline, distinct from the ORF highlight.
+function renderRestrictionSites(normalized, raw) {
+  const sites = findRestrictionSites(normalized);
+  siteListEl.innerHTML = "";
+
+  if (sites.length === 0) {
+    const empty = document.createElement("li");
+    empty.className = "fact-list-empty";
+    empty.textContent = "No recognition sites found.";
+    siteListEl.append(empty);
+    return [];
+  }
+
+  const ranges = sites.map((site) => {
+    const item = document.createElement("li");
+    item.className = "site-list-item";
+    item.textContent = `${site.name} · ${site.site} · position ${site.start}`;
+    siteListEl.append(item);
+    return mapNormalizedRangeToRaw(raw, site.start, site.start + site.site.length);
+  });
+
+  return ranges;
+}
+
+function clearRestrictionSites() {
+  siteListEl.innerHTML = '<li class="fact-list-empty">No sequence yet.</li>';
+}
+
 function handleInput() {
   const raw = textarea.value;
   const { normalized, valid } = renderValidationState(raw);
@@ -231,6 +265,7 @@ function handleInput() {
     clearFrames();
     clearGcMeter();
     clearCodonUsage();
+    clearRestrictionSites();
     renderOrfList([]);
     overlayEl.innerHTML = renderOverlayHtml(raw);
     return;
@@ -239,10 +274,11 @@ function handleInput() {
   renderFrames(normalized);
   renderGcMeter(normalized);
   renderCodonUsage(normalized);
+  state.siteRanges = renderRestrictionSites(normalized, raw);
   state.orfs = findOrfs(normalized);
   renderOrfList(state.orfs);
   const orfRange = renderOrfHighlight();
-  overlayEl.innerHTML = renderOverlayHtml(raw, { orfRange });
+  overlayEl.innerHTML = renderOverlayHtml(raw, { orfRange, siteRanges: state.siteRanges });
 }
 
 textarea.addEventListener("input", handleInput);
