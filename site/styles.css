@@ -1,0 +1,119 @@
+:root {
+  --bg: #f5efe1;
+  --surface-1: #fbf7ec;
+  --surface-2: #eee5d0;
+  --text: #2b2620;
+  --text-muted: #6b6252;
+  --accent: #2f4b7c;
+  --accent-support: #b3452c;
+  --success: #4c7a52;
+  --danger: #b3452c;
+  --base-a: #d1495b;
+  --base-c: #2a9d8f;
+  --base-g: #e0a72e;
+  --base-t: #6a4c93;
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 48px;
+  --space-6: 64px;
+
+  --radius: 6px;
+  --shadow: 0 2px 8px rgba(43, 38, 32, 0.12);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-ui: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.site-header {
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.wordmark-dot--a {
+  color: var(--base-a);
+}
+
+.wordmark-dot--g {
+  color: var(--base-g);
+}
+
+.tagline {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+main {
+  flex: 1;
+  padding: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  text-align: center;
+  max-width: 60ch;
+}
+
+.site-footer {
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.site-footer a {
+  color: var(--text-muted);
+}
