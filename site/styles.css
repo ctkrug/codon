@@ -530,10 +530,6 @@ main {
   outline-offset: 2px;
 }
 
-.sequence-input.is-empty {
-  color: var(--text-muted);
-}
-
 .sequence-input.is-invalid {
   border-color: var(--danger);
 }
