@@ -48,3 +48,16 @@ test("findOrfs stays roughly linear on a long run of in-frame starts with no sto
   assert.equal(orfs.length, 0);
   assert.ok(elapsed < 1000, `expected findOrfs to finish in under 1s, took ${elapsed}ms`);
 });
+
+test("findOrfs bounds total ORFs when thousands of starts share one distant stop", () => {
+  // Every ATG here is a nested in-frame start ending at the same trailing
+  // stop codon, so a naive implementation builds one full-length protein
+  // string per start — thousands of them, which is enough to exhaust the
+  // heap. findOrfs must stay bounded and fast instead of crashing.
+  const sequence = "ATG".repeat(10000) + "TAA";
+  const started = Date.now();
+  const orfs = findOrfs(sequence);
+  const elapsed = Date.now() - started;
+  assert.ok(orfs.length < 10000, `expected findOrfs to cap runaway ORF counts, got ${orfs.length}`);
+  assert.ok(elapsed < 2000, `expected findOrfs to finish in under 2s, took ${elapsed}ms`);
+});
