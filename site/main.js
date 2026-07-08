@@ -112,10 +112,9 @@ function applyOrfSelection(index, { scroll = false } = {}) {
 }
 
 function renderOrfListSelection() {
-  for (const item of orfListEl.children) {
-    const isSelected = Number(item.dataset.index) === state.selectedOrfIndex;
-    item.classList.toggle("is-selected", isSelected);
-    item.setAttribute("aria-selected", String(isSelected));
+  for (const button of orfListEl.querySelectorAll(".orf-list-item")) {
+    const isSelected = Number(button.dataset.index) === state.selectedOrfIndex;
+    button.setAttribute("aria-selected", String(isSelected));
   }
 }
 
@@ -131,13 +130,13 @@ function renderOrfList(orfs) {
 
   orfs.forEach((orf, index) => {
     const item = document.createElement("li");
-    item.dataset.index = String(index);
-    item.setAttribute("role", "option");
-    item.tabIndex = 0;
+    item.setAttribute("role", "presentation");
 
     const button = document.createElement("button");
     button.type = "button";
     button.className = "orf-list-item";
+    button.dataset.index = String(index);
+    button.setAttribute("role", "option");
     button.textContent = `${orf.frame} · ${orf.length}bp · ${orf.start}–${orf.end}`;
     button.addEventListener("click", () => applyOrfSelection(index, { scroll: true }));
 
